@@ -1,0 +1,53 @@
+# ============================================================
+# DOCKER IGNORE FILE
+# ============================================================
+# This tells Docker which files/folders to EXCLUDE when building
+# Similar to .gitignore - makes builds faster and images smaller
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Dependencies (will be installed in container)
+node_modules
+vendor
+
+# Cache and logs (will be generated in container)
+storage/*.log
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+
+# Database files
+*.sqlite
+*.sqlite-journal
+
+# Test files
+tests/
+phpunit.xml
+.phpunit.result.cache
+
+# Environment files (contains secrets!)
+.env
+.env.*
+!.env.example
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Misc
+*.log
+*.zip
+*.tar
+*.gz
+test_*.txt
+queue-worker.bat

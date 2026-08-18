@@ -1,0 +1,268 @@
+# ============================================================
+# DOCKER COMPOSE CONFIGURATION
+# LARAVEL 12 + NGINX REVERSE PROXY
+# ============================================================
+#
+# Architecture:
+#
+# Browser / React Frontend
+#          |
+#          |
+#          v
+#     Nginx Container
+#     Port 80
+#          |
+#          |
+#          v
+#     Laravel Container
+#     Port 8000
+#
+# Nginx exposes the application publicly and forwards
+# requests internally to Laravel.
+#
+# ============================================================
+
+
+services:
+
+  # ==========================================================
+  # LARAVEL APPLICATION CONTAINER
+  # ==========================================================
+  app:
+
+    # Build Laravel image using your Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: laravel_app
+
+    restart: unless-stopped
+
+
+    # IMPORTANT:
+    # We do NOT expose Laravel directly anymore.
+    #
+    # Before:
+    # http://localhost:8000
+    #
+    # Now:
+    # Nginx handles public traffic.
+    #
+    # Laravel is only accessible internally.
+    expose:
+      - "8000"
+
+
+    environment:
+
+      # ------------------------------------------------------
+      # APPLICATION SETTINGS
+      # ------------------------------------------------------
+
+      - APP_ENV=${APP_ENV:-local}
+
+      - APP_DEBUG=${APP_DEBUG:-true}
+
+      # Nginx is now the public entry point
+      - APP_URL=${APP_URL:-http://localhost}
+
+      - APP_TIMEZONE=${APP_TIMEZONE:-Africa/Lagos}
+
+
+      # ------------------------------------------------------
+      # DATABASE SETTINGS
+      # ------------------------------------------------------
+
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+
+      - DB_HOST=${DB_HOST}
+
+      - DB_PORT=${DB_PORT:-3306}
+
+      - DB_DATABASE=${DB_DATABASE}
+
+      - DB_USERNAME=${DB_USERNAME}
+
+      - DB_PASSWORD=${DB_PASSWORD}
+
+
+
+      # ------------------------------------------------------
+      # QUEUE / CACHE / SESSION
+      # ------------------------------------------------------
+
+      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
+
+      - SESSION_DRIVER=${SESSION_DRIVER:-database}
+
+      - CACHE_STORE=${CACHE_STORE:-database}
+
+
+
+      # ------------------------------------------------------
+      # MAIL SETTINGS
+      # ------------------------------------------------------
+
+      - MAIL_MAILER=${MAIL_MAILER:-smtp}
+
+      - MAIL_HOST=${MAIL_HOST}
+
+      - MAIL_PORT=${MAIL_PORT:-587}
+
+      - MAIL_USERNAME=${MAIL_USERNAME}
+
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-"Enlist Portal"}
+
+
+
+      # ------------------------------------------------------
+      # APPLICATION CUSTOM VARIABLES
+      # ------------------------------------------------------
+
+      - RECRUITMENT_URL=${RECRUITMENT_URL}
+
+      - RECRUITMENT_ENLIST_URL=${RECRUITMENT_ENLIST_URL}
+
+      - WINDOWS_SERVER_ADMIN_URL=${WINDOWS_SERVER_ADMIN_URL}
+
+
+      # React frontend URL
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost}
+
+
+      - SUPPORT_EMAIL=${SUPPORT_EMAIL}
+
+      - SUPPORT_PHONE=${SUPPORT_PHONE}
+
+      - SUPPORT_PHONE_DISPLAY=${SUPPORT_PHONE_DISPLAY}
+
+      - SUPPORT_HOURS=${SUPPORT_HOURS}
+
+
+
+      # ------------------------------------------------------
+      # FILE STORAGE
+      # ------------------------------------------------------
+
+      - FILESYSTEM_DISK=${FILESYSTEM_DISK:-public}
+
+
+
+    # ------------------------------------------------------
+    # PERSISTENT STORAGE
+    # ------------------------------------------------------
+
+    volumes:
+
+      # Application source code
+      - ./:/var/www/html
+
+
+      # Laravel storage persistence
+      - ./storage:/var/www/html/storage
+
+
+      # Keep container versions of dependencies
+      # Prevent host machine overriding these folders
+      - /var/www/html/vendor
+
+      - /var/www/html/node_modules
+
+
+
+    # ------------------------------------------------------
+    # HOST DATABASE ACCESS
+    # ------------------------------------------------------
+    #
+    # Useful when database runs on the host machine.
+    #
+    extra_hosts:
+
+      - "host.docker.internal:host-gateway"
+
+
+
+    networks:
+
+      - laravel_network
+
+
+
+
+
+  # ==========================================================
+  # NGINX WEB SERVER
+  # ==========================================================
+  #
+  # This is the public-facing server.
+  #
+  # It allows old URLs like:
+  #
+  # /enlist_backend_api/public/api/login
+  #
+  # to continue working.
+  #
+  # ==========================================================
+
+  nginx:
+
+
+    image: nginx:alpine
+
+
+    container_name: laravel_nginx
+
+
+    restart: unless-stopped
+
+
+
+    ports:
+
+      # Public HTTP access
+      #- "80:80"
+      - "8080:80"
+
+
+
+    volumes:
+
+
+      # Load our custom nginx configuration
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+
+
+    depends_on:
+
+
+      # Start Laravel before Nginx
+      - app
+
+
+
+    networks:
+
+
+      - laravel_network
+
+
+
+
+
+# ============================================================
+# NETWORK CONFIGURATION
+# ============================================================
+
+networks:
+
+  laravel_network:
+
+    driver: bridge
