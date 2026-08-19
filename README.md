@@ -777,6 +777,81 @@ Tochukwu Uchem
 Email:
 uchemcolin@gmail.com
 
+================================================================================
+23. API DOCUMENTATION — LARAVEL SCRAMBLE
+================================================================================
+
+Laravel Scramble is used to automatically generate API documentation for the
+Qelvuno Enlist API.
+
+The documentation provides an interactive view of the available API endpoints,
+including:
+
+- API routes
+- HTTP methods
+- Request parameters
+- Request bodies
+- Validation rules
+- Response structures
+- Authentication requirements
+- API schemas
+
+
+ACCESSING THE API DOCUMENTATION
+-------------------------------
+
+When running the application locally with:
+
+    php artisan serve
+
+the Laravel Scramble documentation can be accessed at:
+
+    http://localhost:8000/docs/api
+
+
+OPENAPI SPECIFICATION
+---------------------
+
+The generated OpenAPI specification can be accessed at:
+
+    http://localhost:8000/docs/api.json
+
+
+PRODUCTION
+----------
+
+When the application is deployed to a production server, replace the local
+host address with the application's domain.
+
+Example:
+
+    https://yourdomain.com/docs/api
+
+OpenAPI specification:
+
+    https://yourdomain.com/docs/api.json
+
+
+USAGE
+-----
+
+The Scramble documentation can be used by frontend developers, mobile
+developers, testers and backend developers to understand and test the API
+without manually inspecting every route and controller.
+
+The documentation should remain synchronized with the application's API
+implementation.
+
+If API routes, request validation, controllers, resources or response
+structures change, the generated documentation should be checked to ensure
+that it accurately represents the current API.
+
+
+SECURITY
+--------
+
+If the API documentation exposes internal endpoints or sensitive information,
+access to the documentation should be restricted appropriately in production.
 
 ================================================================================
 END OF QELVUNO ENLIST API README
