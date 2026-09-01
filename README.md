@@ -778,7 +778,100 @@ Email:
 uchemcolin@gmail.com
 
 ================================================================================
-23. API DOCUMENTATION — LARAVEL SCRAMBLE
+23. MySQL onboarding query
+================================================================================
+
+MySQL Query to onboarding someone from enlist to documentation 
+to complete their onboarding process. All tables are from the legacy 
+tables, all except onboardingreport_test_2 has a few 
+schema modifications to be able to work with the revamping.
+
+SELECT *
+FROM recruitment_sps_test_2.personal_info
+WHERE referenceNo = 'FIRS-IA-0726F7E2DC7F';
+
+SELECT *
+FROM recruitment_documentation_test_2.personal_info
+WHERE referenceNo = 'FIRS-IA-0726F7E2DC7F';
+
+INSERT INTO recruitment_documentation_test_2.personal_info
+(
+firstName,
+surname,
+middleName,
+referenceNo,
+passportPhotograph,
+title,
+maidenName,
+dateOfBirth,
+placeOfBirth,
+birthCertificate,
+gender,
+state_of_origin,
+local_govt,
+nationality,
+nin,
+phoneNo,
+email
+)
+SELECT
+firstName,
+surname,
+middleName,
+referenceNo,
+passportPhotograph,
+title,
+maidenName,
+dateOfBirth,
+placeOfBirth,
+birthCertificate,
+gender,
+state_of_origin,
+local_govt,
+nationality,
+nin,
+phoneNo,
+email
+FROM recruitment_sps_test_2.personal_info
+WHERE referenceNo = 'FIRS-IA-0726F7E2DC7F';
+
+SELECT *
+FROM recruitment_documentation_test_2.personal_info
+WHERE referenceNo = 'FIRS-IA-0726F7E2DC7F';
+
+INSERT INTO onboardingreport_test_2.onboarded
+(reference)
+VALUES
+('FIRS-IA-0726F7E2DC7F');
+
+INSERT INTO onboardingreport_test_2.staff
+(ir, name)
+VALUES
+('28775', 'John Doe');
+
+INSERT INTO onboardingreport_test_2.transfer_log
+(reference, ir, done_by)
+VALUES
+(
+'FIRS-IA-0726F7E2DC7F',
+'28775',
+'John Doe'
+);
+
+SELECT *
+FROM onboardingreport_test_2.transfer_log
+WHERE reference = 'FIRS-IA-0726F7E2DC7F';
+
+SELECT *
+FROM onboardingreport_test_2.onboarded
+WHERE reference = 'FIRS-IA-0726F7E2DC7F';
+
+SELECT *
+FROM recruitment_documentation_test_2.personal_info
+WHERE referenceNo = 'FIRS-IA-0726F7E2DC7F';
+
+================================================================================
+24. API DOCUMENTATION — LARAVEL SCRAMBLE
 ================================================================================
 
 Laravel Scramble is used to automatically generate API documentation for the
